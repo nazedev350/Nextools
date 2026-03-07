@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NexTools - Universal Downloader</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="sb-left">
+      <span id="sbTime" class="sb-time">00:00</span>
+      <span id="sbDate" class="sb-date">—</span>
+    </div>
+    <div class="sb-right">
+      <!-- signal bars -->
+      <svg class="sb-icon" width="17" height="13" viewBox="0 0 17 13">
+        <rect x="0"  y="7"  width="3" height="6" rx="1" opacity="0.3"/>
+        <rect x="4.5" y="5" width="3" height="8" rx="1" opacity="0.5"/>
+        <rect x="9"  y="3"  width="3" height="10" rx="1" opacity="0.7"/>
+        <rect x="13.5" y="0" width="3" height="13" rx="1"/>
+      </svg>
+
+      <!-- battery -->
+      <div class="battery">
+        <div class="bat-body">
+          <div class="bat-fill" id="batFill" style="width:70%"></div>
+        </div>
+        <div class="bat-tip"></div>
+        <span class="bat-pct" id="batPct">—%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP LOGO HEADER -->
+  <header class="app-header">
+    <div class="logo">
+      <svg class="logo-svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <rect width="36" height="36" rx="11" fill="url(#g1)"/>
+        <path d="M12 12L18 24L24 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="10" y1="29" x2="26" y2="29" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="36" y2="36">
+            <stop stop-color="#6366f1"/>
+            <stop offset="1" stop-color="#a855f7"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div>
+        <div class="logo-name">NexTools</div>
+        <div class="logo-sub">Universal Downloader</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- PLATFORM PILLS -->
+  <div class="pills-wrap">
+    <div class="pills" id="pills">
+
+      <button class="pill active" data-p="facebook">
+        <span class="pill-ico fb-ico">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </span>
+        Facebook
+      </button>
+
+      <button class="pill" data-p="tiktok">
+        <span class="pill-ico tt-ico">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 105.33 6.27V8.69a8.28 8.28 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+        </span>
+        TikTok
+      </button>
+
+      <button class="pill" data-p="instagram">
+        <span class="pill-ico ig-ico">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </span>
+        Instagram
+      </button>
+
+      <button class="pill" data-p="spotify">
+        <span class="pill-ico sp-ico">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </span>
+        Spotify
+      </button>
+
+      <button class="pill" data-p="soundcloud">
+        <span class="pill-ico sc-ico">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.175 12.225c-.074 0-.131.06-.12.133l.84 5.318c.008.04.048.068.12.068.072 0 .112-.028.12-.068l.96-5.318c-.008-.073-.065-.133-.12-.133h-.8v-.001zm1.965-.225c-.068 0-.12.052-.12.116l1.08 5.43c.008.04.052.084.12.084.068 0 .112-.044.12-.084l1.238-5.43c-.008-.064-.052-.116-.12-.116h-2.318zm2.4.338c-.067 0-.12.052-.12.115l1.357 5.092c.008.04.053.084.12.084.068 0 .112-.044.12-.084l1.558-5.092c-.008-.063-.052-.115-.12-.115h-2.915zm3.12-.613c-.064 0-.12.053-.12.12l1.516 4.77c.009.04.053.084.12.084.068 0 .112-.044.12-.084l1.798-4.77c-.009-.067-.056-.12-.12-.12h-3.314zm3.6-.45c-.068 0-.12.052-.12.12l1.68 4.32c.008.04.052.084.12.084.068 0 .112-.044.12-.084l2.04-4.32c-.009-.068-.056-.12-.12-.12h-3.72zm4.08-1.575c-.72-.84-1.793-1.2-2.88-.96-.36-3.12-3-5.52-6.24-5.52-1.32 0-2.52.4-3.48 1.08-.36.24-.48.6-.36.96.12.36.48.6.84.48.84-.48 1.8-.72 2.8-.72 2.64 0 4.92 1.8 5.4 4.32.12.48.6.84 1.08.72.36-.12.72 0 .96.24.24.24.36.6.24.96-.12.36-.48.6-.84.6h-.12c-.6 0-1.08.48-1.08 1.08v.24c0 .6.48 1.08 1.08 1.08h.24c1.68 0 3.12-1.44 3.12-3.12 0-.96-.36-1.8-.96-2.44z"/></svg>
+        </span>
+        SoundCloud
+      </button>
+
+    </div>
+  </div>
+
+  <!-- MAIN TOOL -->
+  <main class="main">
+    <div class="card">
+
+      <div class="card-top">
+        <div class="ct-icon" id="ctIcon">📘</div>
+        <div class="ct-info">
+          <div class="ct-name" id="ctName">Facebook Downloader</div>
+          <div class="ct-desc" id="ctDesc">Paste URL video Facebook</div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <div class="ibox">
+          <span class="ibox-pfx" id="iPfx">🔗</span>
+          <input id="urlInput" type="text" placeholder="Paste URL disini..." spellcheck="false" autocomplete="off"/>
+          <button class="iclear" id="clearBtn">✕</button>
+        </div>
+        <button class="dl-go" id="goBtn">
+          <span id="goBtnLbl">Download</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Result zone -->
+      <div id="zone" style="display:none">
+
+        <div id="zLoad" class="z-loading" style="display:none">
+          <div class="bars"><span/><span/><span/><span/><span/></div>
+          <p>Memproses<span class="dotdot"></span></p>
+        </div>
+
+        <div id="zErr" class="z-error" style="display:none">
+          <div class="z-err-ico">⚠️</div>
+          <p id="zErrMsg">Terjadi kesalahan.</p>
+          <button class="btn-retry" onclick="resetUI()">← Coba Lagi</button>
+        </div>
+
+        <div id="zMedia" style="display:none">
+          <div class="mcard">
+            <div class="mcard-cover-wrap">
+              <img id="mCover" src="" alt="" class="mcard-cover"/>
+              <span class="mcard-ptag" id="mPtag"></span>
+            </div>
+            <div class="mcard-body">
+              <p class="mcard-title" id="mTitle">—</p>
+              <div class="mcard-meta" id="mMeta"></div>
+              <div class="mcard-links" id="mLinks"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">NexTools &copy; 2025 — Created By YudzzSénpai</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
