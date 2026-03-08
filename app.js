@@ -416,7 +416,7 @@ function makeDownloadBtn(link) {
       const ext = link.isAudio ? 'mp3'
         : link.label.toLowerCase().includes('foto') ? 'jpg'
         : 'mp4';
-      const filename = `nexload_${link.label.replace(/\s+/g,'_').toLowerCase()}.${ext}`;
+      const filename = `nexdown_${link.label.replace(/\s+/g,'_').toLowerCase()}.${ext}`;
 
       // Try blob download (works for same-origin / CORS-allowed CDNs)
       let downloaded = false;
