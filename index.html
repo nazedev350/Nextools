@@ -9,8 +9,14 @@
 </head>
 <body>
 
-  <div class="bg-orb orb1"></div>
-  <div class="bg-orb orb2"></div>
+  <!-- Video Background -->
+  <video id="bgVideo" autoplay muted loop playsinline preload="auto"
+    style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;opacity:.80;">
+    <source src="https://res.cloudinary.com/dtc7vwbm7/video/upload/v1773327732/w4kjg1heydtqibp5dffy.mp4" type="video/mp4"/>
+  </video>
+  <!-- Overlay gelap supaya konten tetap terbaca -->
+  <div style="position:fixed;inset:0;z-index:0;background:rgba(7,8,15,.55);pointer-events:none;"></div>
+
 
   <!-- STATUS BAR -->
   <div class="status-bar">
@@ -19,15 +25,10 @@
       <span id="sbDate" class="sb-date">—</span>
     </div>
     <div class="sb-right">
-      <!-- signal bars -->
-      <svg class="sb-icon" width="17" height="13" viewBox="0 0 17 13">
-        <rect x="0"  y="7"  width="3" height="6" rx="1" opacity="0.3"/>
-        <rect x="4.5" y="5" width="3" height="8" rx="1" opacity="0.5"/>
-        <rect x="9"  y="3"  width="3" height="10" rx="1" opacity="0.7"/>
-        <rect x="13.5" y="0" width="3" height="13" rx="1"/>
-      </svg>
 
-      <!-- battery -->
+
+
+      <!-- Battery -->
       <div class="battery">
         <div class="bat-body">
           <div class="bat-fill" id="batFill" style="width:70%"></div>
@@ -35,6 +36,7 @@
         <div class="bat-tip"></div>
         <span class="bat-pct" id="batPct">—%</span>
       </div>
+
     </div>
   </div>
 
@@ -113,7 +115,8 @@
         </div>
       </div>
 
-      <div class="input-area">
+      <!-- URL Input Area -->
+      <div class="input-area" id="urlInputArea">
         <div class="ibox">
           <span class="ibox-pfx" id="iPfx">🔗</span>
           <input id="urlInput" type="text" placeholder="Paste URL disini..." spellcheck="false" autocomplete="off"/>
@@ -121,15 +124,18 @@
         </div>
         <button class="dl-go" id="goBtn">
           <span id="goBtnLbl">Download</span>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <polyline points="19 12 12 19 5 12"/>
+          </svg>
         </button>
       </div>
 
-      <!-- Result zone -->
+      <!-- Result Zone -->
       <div id="zone" style="display:none">
 
         <div id="zLoad" class="z-loading" style="display:none">
-          <div class="bars"><span/><span/><span/><span/><span/></div>
+          <div class="bars"><span></span><span></span><span></span><span></span><span></span></div>
           <p>Memproses<span class="dotdot"></span></p>
         </div>
 
@@ -159,6 +165,21 @@
 
   <footer class="footer">NexDown &copy; 2026 — Created By YudzzSénpai</footer>
 
+  <!-- Music Player Float -->
+  <button class="music-float" id="musicFloat" aria-label="Putar Musik" onclick="toggleMusic()">
+    <span class="mf-icon" id="mfIconWrap">
+      <!-- Play icon (default) -->
+      <svg id="iconPlay" width="20" height="20" viewBox="0 0 24 24" fill="white">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+      <!-- Pause icon (hidden by default) -->
+      <svg id="iconPause" width="20" height="20" viewBox="0 0 24 24" fill="white" style="display:none">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+      </svg>
+    </span>
+    <span class="music-tooltip" id="mfTipText">Putar Musik</span>
+  </button>
+
     <!-- WhatsApp Float Button -->
   <a class="wa-float" href="https://wa.me/6289682167739" target="_blank" rel="noopener noreferrer" aria-label="Chat WhatsApp">
     <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
@@ -166,7 +187,66 @@
     </svg>
     <span class="wa-tooltip">Chat WhatsApp</span>
   </a>
-            
+
+
+  <!-- Hidden Audio Player -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://res.cloudinary.com/dtc7vwbm7/video/upload/v1773326218/aua2wxyjwrbeseslu9f3.mp3" type="audio/mpeg"/>
+  </audio>
+
+  <script>
+  const bgMusic    = document.getElementById('bgMusic');
+  const musicFloat = document.getElementById('musicFloat');
+  const iconPlay   = document.getElementById('iconPlay');
+  const iconPause  = document.getElementById('iconPause');
+  const mfTipText  = document.getElementById('mfTipText');
+  let isPlaying    = false;
+
+  function setPlaying(state) {
+    isPlaying = state;
+    if (state) {
+      musicFloat.classList.add('playing');
+      iconPlay.style.display  = 'none';
+      iconPause.style.display = '';
+      mfTipText.textContent   = 'Pause Musik';
+    } else {
+      musicFloat.classList.remove('playing');
+      iconPlay.style.display  = '';
+      iconPause.style.display = 'none';
+      mfTipText.textContent   = 'Putar Musik';
+    }
+  }
+
+  function toggleMusic() {
+    if (isPlaying) {
+      bgMusic.pause();
+      setPlaying(false);
+    } else {
+      bgMusic.play().then(() => setPlaying(true)).catch(() => {});
+    }
+  }
+
+  // Autoplay: coba langsung putar saat halaman load
+  // Browser modern blokir autoplay dengan suara, tapi audio boleh autoplay
+  window.addEventListener('load', () => {
+    bgMusic.volume = 0.7;
+    bgMusic.play().then(() => {
+      setPlaying(true);
+    }).catch(() => {
+      // Jika browser blokir autoplay, tunggu interaksi pertama user
+      const tryPlay = () => {
+        bgMusic.play().then(() => {
+          setPlaying(true);
+          document.removeEventListener('click', tryPlay);
+          document.removeEventListener('touchstart', tryPlay);
+        }).catch(() => {});
+      };
+      document.addEventListener('click', tryPlay, { once: true });
+      document.addEventListener('touchstart', tryPlay, { once: true });
+    });
+  });
+  </script>
+
   <script src="app.js"></script>
 </body>
 </html>
