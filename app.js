@@ -157,39 +157,64 @@ async function fetchFacebook(url) {
 
 // ── TIKTOK ────────────────────────────────────────────────────────────────────
 async function fetchTikTok(url) {
-  const [r1, r2] = await Promise.allSettled([
+  // Jalankan 3 API paralel: siputzx v1, siputzx v2, yupra (khusus slide lebih andal)
+  const [r1, r2, r3] = await Promise.allSettled([
     apiFetch(`https://api.siputzx.my.id/api/d/tiktok?url=${encodeURIComponent(url)}`),
     apiFetch(`https://api.siputzx.my.id/api/d/tiktok/v2?url=${encodeURIComponent(url)}`),
+    apiFetch(`https://api.yupra.my.id/api/downloader/tiktok?url=${encodeURIComponent(url)}`),
   ]);
+
   if (r1.status === 'rejected' || !r1.value?.status || !r1.value?.data)
     throw new Error('Gagal mengambil data TikTok. Pastikan URL valid.');
 
   const d        = r1.value.data;
-  const musicUrl = (r2.status === 'fulfilled' && r2.value?.data?.music_link) ? r2.value.data.music_link : null;
-  const thumb    = (r2.status === 'fulfilled' && r2.value?.data?.cover_link) ? r2.value.data.cover_link : d.thumbnail || null;
+  const musicUrl = (r2.status === 'fulfilled' && r2.value?.data?.music_link)
+    ? r2.value.data.music_link
+    : null;
+  const thumb    = (r2.status === 'fulfilled' && r2.value?.data?.cover_link)
+    ? r2.value.data.cover_link
+    : d.thumbnail || null;
 
-  // SLIDE
+  // ── SLIDE ──
   if (d.type === 'slide') {
-    const imgs = (d.media || []).filter(m => m.type === 'image');
+    // Coba pakai data dari api.yupra.my.id dulu — URL foto langsung dari TikTok CDN
+    const yupra  = (r3.status === 'fulfilled' && r3.value?.result?.status) ? r3.value.result : null;
+    const yCover = yupra?.cover || thumb;
+    const yMusic = yupra?.music_info?.url || musicUrl;
+    const yTitle = yupra?.title || d.title || 'TikTok Slide';
+    const yAuthor = d.author || '—';
+
+    if (yupra && Array.isArray(yupra.data) && yupra.data.length) {
+      // Pakai data yupra — URL foto langsung CDN TikTok, tidak lewat rapidcdn
+      const photos = yupra.data.filter(item => item.type === 'photo' && item.url);
+      if (photos.length) {
+        const links = photos.map((p, i) => ({
+          url   : p.url,
+          label : `Foto ${i+1}`,
+          sub   : 'slide · jpeg',
+          isAudio: false,
+          direct : true,
+          thumb  : p.url,
+        }));
+        if (yMusic) links.push({ url:yMusic, label:'Musik / Audio', sub:'audio · mp3', isAudio:true, direct:true });
+        return {
+          platform:'tiktok', type:'slide', cover:yCover,
+          title: yTitle,
+          meta: [{ icon:'👤', text:yAuthor }, { icon:'🖼', text:`${photos.length} foto` }],
+          links,
+        };
+      }
+    }
+
+    // Fallback: pakai data siputzx, filter URL rapidcdn
+    const imgs  = (d.media || []).filter(m => m.type === 'image');
     const links = imgs.map((img, i) => {
-      // Prioritas URL: hindari rapidcdn.app yang sering down
-      // Coba urutan: thumbnail → url_list[0] → url langsung
-      const urlList = img.url_list || img.urlList || [];
-      // Filter URL yang bukan dari rapidcdn
+      const urlList  = img.url_list || img.urlList || [];
       const safeUrls = urlList.filter(u => !u.includes('rapidcdn'));
       const directUrl = safeUrls[0] || urlList[0] || img.url || '';
-      // Thumb untuk preview: pakai thumbnail atau URL pertama yang bukan rapidcdn
-      const thumbUrl = img.thumbnail && !img.thumbnail.includes('rapidcdn')
-        ? img.thumbnail
-        : (safeUrls[0] || img.thumbnail || img.url || '');
-      return {
-        url: directUrl,
-        label: `Foto ${i+1}`,
-        sub: 'slide · jpeg',
-        isAudio: false,
-        direct: true,
-        thumb: thumbUrl,
-      };
+      const thumbUrl  = (img.thumbnail && !img.thumbnail.includes('rapidcdn'))
+        ? img.thumbnail : (safeUrls[0] || img.url || '');
+      return { url:directUrl, label:`Foto ${i+1}`, sub:'slide · jpeg', isAudio:false, direct:true, thumb:thumbUrl };
     });
     if (musicUrl) links.push({ url:musicUrl, label:'Musik / Audio', sub:'audio · mp3', isAudio:true, direct:true });
     return {
@@ -200,7 +225,7 @@ async function fetchTikTok(url) {
     };
   }
 
-  // VIDEO
+  // ── VIDEO ──
   const links = [];
   (d.media || []).forEach(m => {
     if (m.quality === 'HD' || m.type === 'video_hd') {
