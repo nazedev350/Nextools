@@ -170,8 +170,27 @@ async function fetchTikTok(url) {
 
   // SLIDE
   if (d.type === 'slide') {
-    const imgs  = (d.media || []).filter(m => m.type === 'image');
-    const links = imgs.map((img, i) => ({ url:img.url, label:`Foto ${i+1}`, sub:'slide · jpeg', isAudio:false, direct:true, thumb:img.thumbnail }));
+    const imgs = (d.media || []).filter(m => m.type === 'image');
+    const links = imgs.map((img, i) => {
+      // Prioritas URL: hindari rapidcdn.app yang sering down
+      // Coba urutan: thumbnail → url_list[0] → url langsung
+      const urlList = img.url_list || img.urlList || [];
+      // Filter URL yang bukan dari rapidcdn
+      const safeUrls = urlList.filter(u => !u.includes('rapidcdn'));
+      const directUrl = safeUrls[0] || urlList[0] || img.url || '';
+      // Thumb untuk preview: pakai thumbnail atau URL pertama yang bukan rapidcdn
+      const thumbUrl = img.thumbnail && !img.thumbnail.includes('rapidcdn')
+        ? img.thumbnail
+        : (safeUrls[0] || img.thumbnail || img.url || '');
+      return {
+        url: directUrl,
+        label: `Foto ${i+1}`,
+        sub: 'slide · jpeg',
+        isAudio: false,
+        direct: true,
+        thumb: thumbUrl,
+      };
+    });
     if (musicUrl) links.push({ url:musicUrl, label:'Musik / Audio', sub:'audio · mp3', isAudio:true, direct:true });
     return {
       platform:'tiktok', type:'slide', cover:thumb,
@@ -341,19 +360,23 @@ function makeDownloadBtn(link) {
       const filename = getFilename(link.url, link.isAudio, link.label);
 
       let ok = false;
-      try {
-        const resp = await fetch(link.url, { mode:'cors' });
-        if (resp.ok) {
-          const blob = await resp.blob();
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(() => { URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 1500);
-          ok = true;
-        }
-      } catch (_) {}
+      // Skip blob fetch untuk rapidcdn (sering gagal/CORS block)
+      const isRapidcdn = link.url && link.url.includes('rapidcdn');
+      if (!isRapidcdn) {
+        try {
+          const resp = await fetch(link.url, { mode:'cors' });
+          if (resp.ok) {
+            const blob = await resp.blob();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 1500);
+            ok = true;
+          }
+        } catch (_) {}
+      }
 
       if (!ok) {
         const a = document.createElement('a');
@@ -443,7 +466,15 @@ function renderResult(data) {
       imgLinks.forEach((img, i) => {
         const t = document.createElement('div');
         t.className = 'slide-thumb';
-        t.innerHTML = `<img src="${img.thumb||img.url}" alt="Foto ${i+1}" loading="lazy" onerror="this.style.opacity='.25'"/><span>${i+1}</span>`;
+        // Pilih URL thumb yang aman (bukan rapidcdn)
+        const thumbSrc = (img.thumb && !img.thumb.includes('rapidcdn'))
+          ? img.thumb
+          : (img.url && !img.url.includes('rapidcdn') ? img.url : '');
+        if (thumbSrc) {
+          t.innerHTML = `<img src="${thumbSrc}" alt="Foto ${i+1}" loading="lazy" onerror="this.innerHTML='<span style=\"font-size:1.4rem\">🖼️</span>'"/><span>${i+1}</span>`;
+        } else {
+          t.innerHTML = `<span style="font-size:1.4rem;display:flex;align-items:center;justify-content:center;height:100%">🖼️</span><span>${i+1}</span>`;
+        }
         strip.appendChild(t);
       });
       le.appendChild(strip);
