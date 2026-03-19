@@ -2,251 +2,194 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NexDown - Universal Downloader</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>NexDown — All-in-One Downloader</title>
+  <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dtc7vwbm7/image/upload/v1773713181/j6sr8hhpamotcf0gtnzl.jpg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
 </head>
 <body>
 
-  <!-- Video Background -->
-  <video id="bgVideo" autoplay muted loop playsinline preload="auto"
-    style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;opacity:.80;">
-    <source src="https://res.cloudinary.com/dtc7vwbm7/video/upload/v1773327732/w4kjg1heydtqibp5dffy.mp4" type="video/mp4"/>
-  </video>
-  <!-- Overlay gelap supaya konten tetap terbaca -->
-  <div style="position:fixed;inset:0;z-index:0;background:rgba(7,8,15,.55);pointer-events:none;"></div>
-
-
-  <!-- STATUS BAR -->
-  <div class="status-bar">
-    <div class="sb-left">
-      <span id="sbTime" class="sb-time">00:00</span>
-      <span id="sbDate" class="sb-date">—</span>
+<!-- LOADING SCREEN -->
+<div id="loadScreen">
+  <div class="ls-bg"></div>
+  <div class="ls-content">
+    <div class="ls-ring-wrap">
+      <svg class="ls-ring" viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,.07)" stroke-width="6"/>
+        <circle cx="60" cy="60" r="52" stroke="url(#rg)" stroke-width="6" stroke-linecap="round" stroke-dasharray="326" stroke-dashoffset="240" class="ring-spin"/>
+        <defs><linearGradient id="rg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a78bfa"/><stop offset="50%" stop-color="#f472b6"/><stop offset="100%" stop-color="#34d399"/></linearGradient></defs>
+      </svg>
+      <img class="ls-logo-img" src="https://res.cloudinary.com/dtc7vwbm7/image/upload/v1773713181/j6sr8hhpamotcf0gtnzl.jpg" alt="NexDown"/>
     </div>
-    <div class="sb-right">
+    <p class="ls-brand">NexDown</p>
+    <p class="ls-tagline">Memuat platform&hellip;</p>
+    <div class="ls-dots"><span></span><span></span><span></span></div>
+  </div>
+</div>
 
-
-
-      <!-- Battery -->
-      <div class="battery">
-        <div class="bat-body">
-          <div class="bat-fill" id="batFill" style="width:70%"></div>
-        </div>
-        <div class="bat-tip"></div>
-        <span class="bat-pct" id="batPct">—%</span>
+<!-- PLATFORM PICKER -->
+<div id="platformPicker" class="hidden">
+  <div class="pp-bg"></div>
+  <div class="pp-panel">
+    <div class="pp-header">
+      <div class="pp-logo">
+        <img class="pp-logo-img" src="https://res.cloudinary.com/dtc7vwbm7/image/upload/v1773713181/j6sr8hhpamotcf0gtnzl.jpg" alt="NexDown"/>
+        <span class="pp-logo-text">NexDown</span>
       </div>
+      <p class="pp-subtitle">Pilih platform yang ingin kamu download</p>
+    </div>
+    <div class="pp-grid">
+      <button class="pp-card" data-p="facebook">
+        <div class="pp-card-glow" style="--glow-c:#1877f2"></div>
+        <div class="pp-card-icon">
+          <svg viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+        </div>
+        <span class="pp-card-name">Facebook</span>
+        <span class="pp-card-desc">Video &amp; Reels</span>
+        <div class="pp-card-check">&#10003;</div>
+      </button>
+      <button class="pp-card" data-p="tiktok">
+        <div class="pp-card-glow" style="--glow-c:#fe2c55"></div>
+        <div class="pp-card-icon" style="background:#010101;border-radius:10px">
+          <svg viewBox="0 0 24 24" fill="#fff" style="width:70%;height:70%"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.77 1.52V6.73a4.85 4.85 0 01-1-.04z"/></svg>
+        </div>
+        <span class="pp-card-name">TikTok</span>
+        <span class="pp-card-desc">Video &amp; Slide</span>
+        <div class="pp-card-check">&#10003;</div>
+      </button>
+      <button class="pp-card" data-p="instagram">
+        <div class="pp-card-glow" style="--glow-c:#e1306c"></div>
+        <div class="pp-card-icon">
+          <svg viewBox="0 0 24 24"><defs><radialGradient id="ig1" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="5%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs><path fill="url(#ig1)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </div>
+        <span class="pp-card-name">Instagram</span>
+        <span class="pp-card-desc">Reels &amp; Post</span>
+        <div class="pp-card-check">&#10003;</div>
+      </button>
+      <button class="pp-card" data-p="spotify">
+        <div class="pp-card-glow" style="--glow-c:#1db954"></div>
+        <div class="pp-card-icon">
+          <svg viewBox="0 0 24 24" fill="#1db954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </div>
+        <span class="pp-card-name">Spotify</span>
+        <span class="pp-card-desc">Lagu &amp; Track</span>
+        <div class="pp-card-check">&#10003;</div>
+      </button>
+      <button class="pp-card" data-p="soundcloud">
+        <div class="pp-card-glow" style="--glow-c:#ff5500"></div>
+        <div class="pp-card-icon">
+          <svg viewBox="0 0 24 24" fill="#ff5500"><path d="M1.175 12.225c-.017 0-.034.002-.05.006-.017-.004-.034-.006-.05-.006-.225 0-.407.182-.407.407v.001c0 .224.181.406.406.406.017 0 .034-.002.05-.006.017.004.034.006.05.006.225 0 .406-.181.406-.406v-.001c0-.225-.181-.407-.405-.407zm1.469-.83c-.025 0-.049.004-.073.01-.025-.006-.049-.01-.073-.01-.337 0-.609.272-.609.609v.001c0 .337.272.609.609.609.025 0 .049-.004.073-.01.025.006.049.01.073.01.337 0 .609-.272.609-.609v-.001c0-.337-.272-.609-.609-.609zM24 11.175c0-2.251-1.824-4.076-4.075-4.076-.285 0-.563.03-.832.087C18.48 5.648 16.91 4.5 15.075 4.5c-.583 0-1.137.131-1.631.364C12.503 3.124 11.059 2.25 9.419 2.25c-2.758 0-4.994 2.236-4.994 4.994 0 .152.007.302.021.45C2.906 8.151 2.25 9.184 2.25 10.35c0 1.763 1.429 3.192 3.192 3.192H20.6c1.874 0 3.4-1.525 3.4-3.4v-.032l.001.065z"/></svg>
+        </div>
+        <span class="pp-card-name">SoundCloud</span>
+        <span class="pp-card-desc">Audio &amp; Mix</span>
+        <div class="pp-card-check">&#10003;</div>
+      </button>
+      <button class="pp-card" data-p="twitter">
+        <div class="pp-card-glow" style="--glow-c:#ffffff"></div>
+        <div class="pp-card-icon" style="background:#000;border-radius:10px">
+          <svg viewBox="0 0 24 24" fill="#fff" style="width:65%;height:65%"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </div>
+        <span class="pp-card-name">X / Twitter</span>
+        <span class="pp-card-desc">Video Tweet</span>
+        <div class="pp-card-check">&#10003;</div>
+      </button>
+    </div>
+    <button class="pp-cta" id="ppCta" disabled>
+      <span id="ppCtaLabel">Pilih Platform</span>
+      <span class="pp-cta-arrow">&#8594;</span>
+    </button>
+  </div>
+</div>
 
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+  <div class="statusbar">
+    <div class="sb-left"><span id="sbTime">00:00</span><span id="sbDate" class="sb-date">&mdash;</span></div>
+    <div class="sb-right">
+      <div class="bat-wrap"><div class="bat-body"><div id="batFill" class="bat-fill"></div></div><div class="bat-tip"></div></div>
+      <span id="batPct" class="bat-pct">&mdash;%</span>
     </div>
   </div>
-
-  <!-- APP LOGO HEADER -->
   <header class="app-header">
-    <div class="logo">
-      <svg class="logo-svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <rect width="36" height="36" rx="11" fill="url(#g1)"/>
-        <path d="M12 12L18 24L24 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="10" y1="29" x2="26" y2="29" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-        <defs>
-          <linearGradient id="g1" x1="0" y1="0" x2="36" y2="36">
-            <stop stop-color="#6366f1"/>
-            <stop offset="1" stop-color="#a855f7"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <div>
-        <div class="logo-name">NexDown</div>
-        <div class="logo-sub">Universal Downloader</div>
-      </div>
+    <div class="header-brand">
+      <img class="header-logo-img" src="https://res.cloudinary.com/dtc7vwbm7/image/upload/v1773713181/j6sr8hhpamotcf0gtnzl.jpg" alt="NexDown"/>
+      <span class="header-name">NexDown</span>
+    </div>
+    <div class="header-right">
+      <button class="header-btn" id="changePlatformBtn" title="Kembali" style="width:auto;padding:0 14px;font-family:var(--font-head);font-size:.78rem;font-weight:700;color:var(--muted2);">Kembali</button>
     </div>
   </header>
-
-  <!-- PLATFORM PILLS -->
-  <div class="pills-wrap">
-    <div class="pills" id="pills">
-
-      <button class="pill active" data-p="facebook">
-        <span class="pill-ico fb-ico">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        </span>
-        Facebook
-      </button>
-
-      <button class="pill" data-p="tiktok">
-        <span class="pill-ico tt-ico">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 105.33 6.27V8.69a8.28 8.28 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
-        </span>
-        TikTok
-      </button>
-
-      <button class="pill" data-p="instagram">
-        <span class="pill-ico ig-ico">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        </span>
-        Instagram
-      </button>
-
-      <button class="pill" data-p="spotify">
-        <span class="pill-ico sp-ico">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-        </span>
-        Spotify
-      </button>
-
-      <button class="pill" data-p="soundcloud">
-        <span class="pill-ico sc-ico">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.175 12.225c-.074 0-.131.06-.12.133l.84 5.318c.008.04.048.068.12.068.072 0 .112-.028.12-.068l.96-5.318c-.008-.073-.065-.133-.12-.133h-.8v-.001zm1.965-.225c-.068 0-.12.052-.12.116l1.08 5.43c.008.04.052.084.12.084.068 0 .112-.044.12-.084l1.238-5.43c-.008-.064-.052-.116-.12-.116h-2.318zm2.4.338c-.067 0-.12.052-.12.115l1.357 5.092c.008.04.053.084.12.084.068 0 .112-.044.12-.084l1.558-5.092c-.008-.063-.052-.115-.12-.115h-2.915zm3.12-.613c-.064 0-.12.053-.12.12l1.516 4.77c.009.04.053.084.12.084.068 0 .112-.044.12-.084l1.798-4.77c-.009-.067-.056-.12-.12-.12h-3.314zm3.6-.45c-.068 0-.12.052-.12.12l1.68 4.32c.008.04.052.084.12.084.068 0 .112-.044.12-.084l2.04-4.32c-.009-.068-.056-.12-.12-.12h-3.72zm4.08-1.575c-.72-.84-1.793-1.2-2.88-.96-.36-3.12-3-5.52-6.24-5.52-1.32 0-2.52.4-3.48 1.08-.36.24-.48.6-.36.96.12.36.48.6.84.48.84-.48 1.8-.72 2.8-.72 2.64 0 4.92 1.8 5.4 4.32.12.48.6.84 1.08.72.36-.12.72 0 .96.24.24.24.36.6.24.96-.12.36-.48.6-.84.6h-.12c-.6 0-1.08.48-1.08 1.08v.24c0 .6.48 1.08 1.08 1.08h.24c1.68 0 3.12-1.44 3.12-3.12 0-.96-.36-1.8-.96-2.44z"/></svg>
-        </span>
-        SoundCloud
-      </button>
-
+  <div class="active-platform" id="activePlatformBadge">
+    <div class="ap-icon" id="apIcon"></div>
+    <div class="ap-text">
+      <div class="ap-name" id="apName">Facebook Downloader</div>
+      <div class="ap-desc" id="apDesc">Contoh: facebook.com/share/r/...</div>
     </div>
   </div>
-
-  <!-- MAIN TOOL -->
-  <main class="main">
-    <div class="card">
-
-      <div class="card-top">
-        <div class="ct-icon" id="ctIcon">📘</div>
-        <div class="ct-info">
-          <div class="ct-name" id="ctName">Facebook Downloader</div>
-          <div class="ct-desc" id="ctDesc">Paste URL video Facebook</div>
-        </div>
+  <div class="input-area" id="urlInputArea">
+    <div class="input-wrap">
+      <span class="i-pfx">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      </span>
+      <input type="url" id="urlInput" placeholder="Tempel URL di sini&hellip;" autocomplete="off" spellcheck="false"/>
+      <button id="clearBtn" class="clear-btn" title="Hapus">&#x2715;</button>
+    </div>
+    <button id="goBtn" class="go-btn">
+      <span id="goBtnLbl">Download</span>
+      <span class="go-arr">&#8595;</span>
+    </button>
+  </div>
+  <div id="zone" class="zone" style="display:none">
+    <div id="zLoad" class="z-load" style="display:none">
+      <svg class="z-spinner" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="20" fill="none" stroke="url(#sg)" stroke-width="4" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="60"/>
+        <defs><linearGradient id="sg" x1="0" y1="0" x2="50" y2="50" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
+      </svg>
+      <p>Mengambil data&hellip;</p>
+    </div>
+    <div id="zErr" class="z-err" style="display:none">
+      <span class="z-err-ico">&#9888;&#65039;</span>
+      <p id="zErrMsg"></p>
+      <button onclick="resetUI()">Coba Lagi</button>
+    </div>
+    <div id="zMedia" class="mcard" style="display:none">
+      <div class="mcard-cover-wrap">
+        <img id="mCover" class="mcard-cover" alt="cover" style="display:none"/>
+        <span id="mPtag" class="mcard-ptag tag-fb">FB</span>
       </div>
-
-      <!-- URL Input Area -->
-      <div class="input-area" id="urlInputArea">
-        <div class="ibox">
-          <span class="ibox-pfx" id="iPfx">🔗</span>
-          <input id="urlInput" type="text" placeholder="Paste URL disini..." spellcheck="false" autocomplete="off"/>
-          <button class="iclear" id="clearBtn">✕</button>
-        </div>
-        <button class="dl-go" id="goBtn">
-          <span id="goBtnLbl">Download</span>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <polyline points="19 12 12 19 5 12"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Result Zone -->
-      <div id="zone" style="display:none">
-
-        <div id="zLoad" class="z-loading" style="display:none">
-          <div class="bars"><span></span><span></span><span></span><span></span><span></span></div>
-          <p>Memproses<span class="dotdot"></span></p>
-        </div>
-
-        <div id="zErr" class="z-error" style="display:none">
-          <div class="z-err-ico">⚠️</div>
-          <p id="zErrMsg">Terjadi kesalahan.</p>
-          <button class="btn-retry" onclick="resetUI()">← Coba Lagi</button>
-        </div>
-
-        <div id="zMedia" style="display:none">
-          <div class="mcard">
-            <div class="mcard-cover-wrap">
-              <img id="mCover" src="" alt="" class="mcard-cover"/>
-              <span class="mcard-ptag" id="mPtag"></span>
-            </div>
-            <div class="mcard-body">
-              <p class="mcard-title" id="mTitle">—</p>
-              <div class="mcard-meta" id="mMeta"></div>
-              <div class="mcard-links" id="mLinks"></div>
-            </div>
-          </div>
-        </div>
-
+      <div class="mcard-body">
+        <p id="mTitle" class="mcard-title"></p>
+        <div id="mMeta" class="mcard-meta"></div>
+        <div id="mLinks" class="mcard-links"></div>
       </div>
     </div>
-  </main>
+  </div>
+</div>
 
-  <footer class="footer">NexDown &copy; 2026 — Created By YudzzSénpai</footer>
+<!-- MUSIC PLAYER -->
+<div id="musicPlayer" style="display:none">
+  <img class="mp-album" src="https://res.cloudinary.com/dtc7vwbm7/image/upload/v1773713181/j6sr8hhpamotcf0gtnzl.jpg" alt="NexDown"/>
+  <div class="mp-info">
+    <div class="mp-title">NexDown &mdash; BGM</div>
+    <div class="mp-sub">Tap play untuk memutar</div>
+  </div>
+  <div class="mp-controls">
+    <button class="mp-btn" id="mpPlayBtn" title="Play/Pause">
+      <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <svg class="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+  </div>
+</div>
+<audio id="bgAudio" src="https://res.cloudinary.com/dtc7vwbm7/video/upload/v1773877153/qb81aok0zi8p59tlhrcq.mp3" loop preload="none"></audio>
 
-  <!-- Music Player Float -->
-  <button class="music-float" id="musicFloat" aria-label="Putar Musik" onclick="toggleMusic()">
-    <span class="mf-icon" id="mfIconWrap">
-      <!-- Play icon (default) -->
-      <svg id="iconPlay" width="20" height="20" viewBox="0 0 24 24" fill="white">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
-      <!-- Pause icon (hidden by default) -->
-      <svg id="iconPause" width="20" height="20" viewBox="0 0 24 24" fill="white" style="display:none">
-        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-      </svg>
-    </span>
-    <span class="music-tooltip" id="mfTipText">Putar Musik</span>
-  </button>
+<!-- WA FLOAT -->
+<a id="waFloat" href="https://wa.me/6289682167739" target="_blank" rel="noopener" title="Chat WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
 
-    <!-- WhatsApp Float Button -->
-  <a class="wa-float" href="https://wa.me/6289682167739" target="_blank" rel="noopener noreferrer" aria-label="Chat WhatsApp">
-    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-    </svg>
-    <span class="wa-tooltip">Chat WhatsApp</span>
-  </a>
-
-
-  <!-- Hidden Audio Player -->
-  <audio id="bgMusic" loop preload="auto">
-    <source src="https://res.cloudinary.com/dtc7vwbm7/video/upload/v1773326218/aua2wxyjwrbeseslu9f3.mp3" type="audio/mpeg"/>
-  </audio>
-
-  <script>
-  const bgMusic    = document.getElementById('bgMusic');
-  const musicFloat = document.getElementById('musicFloat');
-  const iconPlay   = document.getElementById('iconPlay');
-  const iconPause  = document.getElementById('iconPause');
-  const mfTipText  = document.getElementById('mfTipText');
-  let isPlaying    = false;
-
-  function setPlaying(state) {
-    isPlaying = state;
-    if (state) {
-      musicFloat.classList.add('playing');
-      iconPlay.style.display  = 'none';
-      iconPause.style.display = '';
-      mfTipText.textContent   = 'Pause Musik';
-    } else {
-      musicFloat.classList.remove('playing');
-      iconPlay.style.display  = '';
-      iconPause.style.display = 'none';
-      mfTipText.textContent   = 'Putar Musik';
-    }
-  }
-
-  function toggleMusic() {
-    if (isPlaying) {
-      bgMusic.pause();
-      setPlaying(false);
-    } else {
-      bgMusic.play().then(() => setPlaying(true)).catch(() => {});
-    }
-  }
-
-  // Autoplay: coba langsung putar saat halaman load
-  // Browser modern blokir autoplay dengan suara, tapi audio boleh autoplay
-  window.addEventListener('load', () => {
-    bgMusic.volume = 0.7;
-    bgMusic.play().then(() => {
-      setPlaying(true);
-    }).catch(() => {
-      // Jika browser blokir autoplay, tunggu interaksi pertama user
-      const tryPlay = () => {
-        bgMusic.play().then(() => {
-          setPlaying(true);
-          document.removeEventListener('click', tryPlay);
-          document.removeEventListener('touchstart', tryPlay);
-        }).catch(() => {});
-      };
-      document.addEventListener('click', tryPlay, { once: true });
-      document.addEventListener('touchstart', tryPlay, { once: true });
-    });
-  });
-  </script>
-
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
