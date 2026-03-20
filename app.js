@@ -324,8 +324,8 @@ const STAR_LABELS = ['','Sangat Buruk 😞','Buruk 😕','Cukup 😐','Bagus �
 
 // ── JSONBin config ──
 // Daftar gratis di https://jsonbin.io → buat bin → copy BIN_ID dan API_KEY
-const JSONBIN_BIN_ID  = 'GANTI_BIN_ID_KAMU';
-const JSONBIN_API_KEY = 'GANTI_API_KEY_KAMU';
+const JSONBIN_BIN_ID  = '69bca93e56e12a1d72419c80';
+const JSONBIN_API_KEY = '$2a$10$JBjO44wdDLPbGNsaPZRfzOoCdqZ9ce579lV80FLZGxqOAB8d4Is3m';
 const JSONBIN_URL     = 'https://api.jsonbin.io/v3/b/'+JSONBIN_BIN_ID;
 
 let _ulasanCache = null; // cache lokal supaya tidak terlalu banyak request
