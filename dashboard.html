@@ -79,7 +79,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 /* info */
 .api-info{flex:1;min-width:0}
 .api-name{font-family:var(--font-head);font-size:.84rem;font-weight:700;color:var(--text)}
-.api-endpoint{font-size:.63rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .api-ping{font-size:.65rem;color:var(--muted2);margin-top:3px}
 
 /* indicator */
@@ -157,7 +156,7 @@ const API_GROUPS = [
     apis: [
       { id:'tt1', name:'TikTok V1', endpoint:'https://api.siputzx.my.id/api/d/tiktok?url=https://www.tiktok.com/@tiktok/video/7106594312292453675' },
       { id:'tt2', name:'TikTok V2', endpoint:'https://api.siputzx.my.id/api/d/tiktok/v2?url=https://www.tiktok.com/@tiktok/video/7106594312292453675' },
-      { id:'tt3', name:'TikTok Yupra', endpoint:'https://api.yupra.my.id/api/downloader/tiktok?url=https://www.tiktok.com/@tiktok/video/7106594312292453675' },
+      { id:'tt3', name:'TikTok V3', endpoint:'https://api.siputzx.my.id/api/d/tiktok/v3?url=https://www.tiktok.com/@tiktok/video/7106594312292453675' },
     ]
   },
   {
@@ -217,7 +216,6 @@ function buildUI(){
         <div class="api-plat-icon">${g.icon}</div>
         <div class="api-info">
           <div class="api-name">${a.name}</div>
-          <div class="api-endpoint">${a.endpoint.replace('https://','').split('?')[0]}</div>
           <div class="api-ping" id="ping-${a.id}">Menunggu cek...</div>
         </div>
         <div class="api-indicator" id="ind-${a.id}">

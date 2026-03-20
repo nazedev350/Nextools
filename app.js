@@ -109,22 +109,25 @@ async function fetchTikTok(url){
   const[r1,r2,r3]=await Promise.allSettled([
     apiFetch(`https://api.siputzx.my.id/api/d/tiktok?url=${encodeURIComponent(url)}`),
     apiFetch(`https://api.siputzx.my.id/api/d/tiktok/v2?url=${encodeURIComponent(url)}`),
-    apiFetch(`https://api.yupra.my.id/api/downloader/tiktok?url=${encodeURIComponent(url)}`),
+    apiFetch(`https://api.siputzx.my.id/api/d/tiktok/v3?url=${encodeURIComponent(url)}`),
   ]);
   if(r1.status==='rejected'||!r1.value?.status||!r1.value?.data)throw new Error('Gagal mengambil data TikTok. Pastikan URL valid.');
   const d=r1.value.data;
   const musicUrl=(r2.status==='fulfilled'&&r2.value?.data?.music_link)?r2.value.data.music_link:null;
   const thumb=(r2.status==='fulfilled'&&r2.value?.data?.cover_link)?r2.value.data.cover_link:d.thumbnail||null;
   if(d.type==='slide'){
-    const yupra=(r3.status==='fulfilled'&&r3.value?.result?.status)?r3.value.result:null;
-    const yCover=yupra?.cover||thumb,yMusic=yupra?.music_info?.url||musicUrl;
-    const yTitle=yupra?.title||d.title||'TikTok Slide',yAuthor=d.author||'—';
-    if(yupra&&Array.isArray(yupra.data)&&yupra.data.length){
-      const photos=yupra.data.filter(item=>item.type==='photo'&&item.url);
+    const v3=(r3.status==='fulfilled'&&r3.value?.status)?r3.value:null;
+    const v3Data=v3?.data||v3?.result||null;
+    const v3Cover=v3Data?.cover||v3Data?.thumbnail||thumb;
+    const v3Music=v3Data?.music||v3Data?.music_url||musicUrl;
+    const v3Title=v3Data?.title||d.title||'TikTok Slide';
+    const v3Author=d.author||'—';
+    if(v3Data&&Array.isArray(v3Data.images||v3Data.photos)){
+      const photos=(v3Data.images||v3Data.photos).filter(p=>p&&(p.url||typeof p==='string'));
       if(photos.length){
-        const links=photos.map((p,i)=>({url:p.url,label:`Foto ${i+1}`,sub:'slide · jpeg',isAudio:false,direct:true,thumb:p.url}));
-        if(yMusic)links.push({url:yMusic,label:'Musik / Audio',sub:'audio · mp3',isAudio:true,direct:true});
-        return{platform:'tiktok',type:'slide',cover:yCover,title:yTitle,meta:[{icon:'👤',text:yAuthor},{icon:'🖼',text:`${photos.length} foto`}],links};
+        const links=photos.map((p,i)=>({url:p.url||p,label:`Foto ${i+1}`,sub:'slide · jpeg',isAudio:false,direct:true,thumb:p.url||p}));
+        if(v3Music)links.push({url:v3Music,label:'Musik / Audio',sub:'audio · mp3',isAudio:true,direct:true});
+        return{platform:'tiktok',type:'slide',cover:v3Cover,title:v3Title,meta:[{icon:'👤',text:v3Author},{icon:'🖼',text:`${photos.length} foto`}],links};
       }
     }
     const imgs=(d.media||[]).filter(m=>m.type==='image');
@@ -323,41 +326,43 @@ tryAutoplay();
 const STAR_LABELS = ['','Sangat Buruk 😞','Buruk 😕','Cukup 😐','Bagus 😊','Luar Biasa! 🤩'];
 
 // ── JSONBin config ──
-// Daftar gratis di https://jsonbin.io → buat bin → copy BIN_ID dan API_KEY
 const JSONBIN_BIN_ID  = '69bca93e56e12a1d72419c80';
 const JSONBIN_API_KEY = '$2a$10$JBjO44wdDLPbGNsaPZRfzOoCdqZ9ce579lV80FLZGxqOAB8d4Is3m';
 const JSONBIN_URL     = 'https://api.jsonbin.io/v3/b/'+JSONBIN_BIN_ID;
 
-let _ulasanCache = null; // cache lokal supaya tidak terlalu banyak request
-
 async function loadUlasan(){
-  if(_ulasanCache) return _ulasanCache;
   try{
     const r = await fetch(JSONBIN_URL+'/latest', {
-      headers:{'X-Master-Key': JSONBIN_API_KEY, 'X-Bin-Meta':'false'}
+      headers:{ 'X-Master-Key': JSONBIN_API_KEY }
     });
-    if(!r.ok) throw new Error('fetch fail');
-    const data = await r.json();
-    _ulasanCache = Array.isArray(data) ? data : (data.ulasan||[]);
-    return _ulasanCache;
-  }catch(_){
-    // fallback ke localStorage jika offline
-    try{ return JSON.parse(localStorage.getItem('nexdown_ulasan')||'[]'); }catch(e){ return []; }
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j = await r.json();
+    // JSONBin v3 selalu bungkus dalam { record: ... }
+    const data = j.record !== undefined ? j.record : j;
+    return Array.isArray(data) ? data : [];
+  } catch(e){
+    console.warn('JSONBin load gagal, pakai localStorage:', e);
+    try{ return JSON.parse(localStorage.getItem('nexdown_ulasan')||'[]'); }catch(_){ return []; }
   }
 }
 
 async function saveUlasan(list){
-  _ulasanCache = list;
-  // backup lokal
+  // backup lokal dulu
   try{ localStorage.setItem('nexdown_ulasan', JSON.stringify(list)); }catch(_){}
   // simpan ke cloud
   try{
-    await fetch(JSONBIN_URL, {
-      method:'PUT',
-      headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY,'X-Bin-Versioning':'false'},
+    const r = await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers:{
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_API_KEY
+      },
       body: JSON.stringify(list)
     });
-  }catch(_){}
+    if(!r.ok) throw new Error('HTTP '+r.status);
+  } catch(e){
+    console.warn('JSONBin save gagal:', e);
+  }
 }
 
 function renderStarsDisplay(avg, container){

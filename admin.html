@@ -223,29 +223,34 @@ $('logoutBtn').addEventListener('click',()=>{
 });
 
 /* ── DATA (JSONBin.io — sama persis dengan app.js) ── */
-const JSONBIN_BIN_ID  = 'GANTI_BIN_ID_KAMU';   // ← isi sama seperti di app.js
-const JSONBIN_API_KEY = 'GANTI_API_KEY_KAMU';   // ← isi sama seperti di app.js
+const JSONBIN_BIN_ID  = '69bca93e56e12a1d72419c80';   // ← isi sama seperti di app.js
+const JSONBIN_API_KEY = '$2a$10$JBjO44wdDLPbGNsaPZRfzOoCdqZ9ce579lV80FLZGxqOAB8d4Is3m';   // ← isi sama seperti di app.js
 const JSONBIN_URL     = 'https://api.jsonbin.io/v3/b/'+JSONBIN_BIN_ID;
 
 async function loadUlasan(){
   try{
-    const r=await fetch(JSONBIN_URL+'/latest',{headers:{'X-Master-Key':JSONBIN_API_KEY,'X-Bin-Meta':'false'}});
-    if(!r.ok) throw new Error('fail');
-    const data=await r.json();
-    return Array.isArray(data)?data:(data.ulasan||[]);
-  }catch(_){
-    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ return []; }
+    const r=await fetch(JSONBIN_URL+'/latest',{headers:{'X-Master-Key':JSONBIN_API_KEY}});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    const data=j.record!==undefined?j.record:j;
+    return Array.isArray(data)?data:[];
+  }catch(e){
+    console.warn('JSONBin load gagal:', e);
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(_){ return []; }
   }
 }
 async function saveUlasan(list){
   try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(list)); }catch(_){}
   try{
-    await fetch(JSONBIN_URL,{
+    const r=await fetch(JSONBIN_URL,{
       method:'PUT',
-      headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY,'X-Bin-Versioning':'false'},
+      headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},
       body:JSON.stringify(list)
     });
-  }catch(_){}
+    if(!r.ok) throw new Error('HTTP '+r.status);
+  }catch(e){
+    console.warn('JSONBin save gagal:', e);
+  }
 }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function waktu(ts){
